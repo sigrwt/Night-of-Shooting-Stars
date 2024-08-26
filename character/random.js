@@ -3075,7 +3075,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 									dialog.buttons[i].node.lili.remove();
 									dialog.buttons[i].node.name.innerHTML='未<br>知';
 									dialog.buttons[i].node.name.dataset.nature='';
-									dialog.buttons[i].style.background='';
+									dialog.buttons[i].style.background='url("theme/simple/unknown.png")';
+									dialog.buttons[i].style.backgroundSize = "100% 100%";
 									dialog.buttons[i]._nointro=true;
 									dialog.buttons[i].classList.add('menubg');
 								}
