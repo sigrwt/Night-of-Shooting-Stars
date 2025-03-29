@@ -113,7 +113,12 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					// }
 				}
 			}
-			lib.character['aya'][3] = ['longjuan', 'fengmi'];
+			//lib.character['aya'][3] = ['longjuan', 'fengmi'];
+			if(lib.config.characters.contains("sb")){
+				lib.character['aya'][3] = ['longjuan', 'fengmi'];			//飞虎：不要绑定文花包
+				lib.character['aya'][4] = ['mode:boss'];
+				lib.characterIntro['aya']='全名射命丸文，妖怪之山的天狗记者。以持有幻想乡最快的报导速度而闻名（也以报导的片面性和捏造闻名）。<br><b>画师：スプライト</b>';
+			}
 			if(!list.length){
 				alert('没有可挑战的BOSS');
 				event.finish();
