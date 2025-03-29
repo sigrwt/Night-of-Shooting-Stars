@@ -743,13 +743,13 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					for(var i=0;i<ui.cardPile.childNodes.length;i++){
 						cards.push(ui.cardPile.childNodes[i]);
 					}
-					player.chooseCardButton('命运之光：获得牌堆中的一张牌',cards).set('filterButton',function(button){
+					target.chooseCardButton('命运之光：获得牌堆中的一张牌',cards).set('filterButton',function(button){
 						return true;
-					});
+					});			//飞虎：请让目标选
 					'step 1'
 					if (result.bool){
-                        player.gain(result.links[0]);
-                        player.$gain2(result.links[0]);
+                        target.gain(result.links[0]);			//飞虎：请让目标获得
+                        target.$gain2(result.links[0]);			//飞虎：同上
                     }
 				},
 				ai:{
@@ -795,10 +795,10 @@ game.import('mode',function(lib,game,ui,get,ai,_status){
 					'step 1'
 					if (result.control == '回复1点体力，获得圣盾'){
 						target.recover();
-						player.drawSkill('shengdun');
+						target.drawSkill('shengdun');			//飞虎：是谁获得牌啊
 					} else if (result.control == '获得1点灵力，获得连击'){
 						target.gainlili();
-						player.drawSkill('lianji');
+						target.drawSkill('lianji');			//同上
 					}
 				},
 				ai:{
