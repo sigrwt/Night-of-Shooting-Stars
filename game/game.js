@@ -7792,6 +7792,11 @@
                             dialog.innerHTML = '<div><div style="width:500px;margin-left:120px; margin-top:12px;text-align:left;font-size:18px;overflow:scroll;display:block;">'+lib.translate[text]+'</div>';
                         }
                         ui.create.div('.avatar',dialog).setBackground(lib.config.intro_character,'character');
+						if(lib.config.intro_character=="monika"){			//飞虎：都准备素材了就加上呗
+							dialog.setBackgroundImage('theme/monika/chat.png');
+							dialog.style.backgroundSize="cover";
+							//dialog.style.opacity="100%";
+						}
                     }
                     // 这里是开始界面
                     var splash=ui.create.div('#splash',document.body);
@@ -7853,7 +7858,7 @@
                         list.push(lib.config.intro_character + '_' + i.toString());
                     }
                     var text = ui.create.div('', '点击继续', document.body);
-                    text.style.top = 'calc(75% + 120px)';
+                    text.style.top = 'calc(75% + 92.5px)';			//飞虎：适配莫妮卡版
                     text.style.left = 'calc(25% + 560px)';
                     if (!lib.config.gameRecord.stg){
                         list.add(lib.config.intro_character+'_nostg');
@@ -8463,7 +8468,7 @@
             marisa_9:'闲的没事的话，来支持东方project的正作吧！弹幕战和格斗作都是精品游戏，还有大量的很好看的周边哟！',
             marisa_no:'就我一个人说话很累的！你倒是回句话啊？不回你就快点打牌去！',
             marisa_library:'啊，这里是阿求的家。阿求家里有很多的藏书，讲述着幻想乡的：幻想乡如何运作啊，现有角色啊，现有卡牌啊，这些看几次都有受益的资料。',
-            marisa_old_identity:'啊，都已经10年了吗？这无比熟悉的，令人智熄的超级无聊感……',
+            marisa_old_identity:'啊，都已经'+(new Date().getFullYear() - 2008)+'年了吗？这无比熟悉的，令人智熄的超级无聊感……',			//飞虎：随年份变化
             marisa_identity:'幻想乡几乎每个月都有大大小小的异变，异变模式就是讲述我们去解决这些异变的故事啦~',
             marisa_versus:'如果只是想轻松的打把牌，对决模式最方便啦。这里支持2v2，3v3，4v4，还有看你喜好自由设定。这些在模式内，通过右上角[选项-对决-游戏模式]就可以设置了。',
             marisa_connect:'你朋友欠你钱了？快把他叫来跟你1v1，把钱从他身上打出来！…………什么，这样做不行吗？',
@@ -10304,7 +10309,7 @@
                     
                     if (lib.config.compare_discard){
                         player.draw();
-                        target.draw();    
+                        target.draw();
                     }
                     "step 7"
                     if(typeof event.target.ai.shown=='number'&&event.target.ai.shown<=0.85&&event.addToAI){
@@ -12573,7 +12578,7 @@
                         }
                     };
                     var broadcast=function(){
-                        game.broadcastAll(function(player,cards,num){
+                        game.broadcast(function(player,cards,num){			//飞虎：没有的代码别瞎改啊
                             player.directgain(cards);
                             _status.cardPileNum=num;
                         },player,cards,ui.cardPile.childNodes.length);
@@ -13305,6 +13310,7 @@
                         // 然后插入技能牌node里去
                         cards[0].style.transform='';
                         cards[0].classList.add('drawinghidden');
+						// 在这里追加效果就OK了吧
                         var info=get.info(cards[0]);
                         if(info.skills){
                             for(var i=0;i<info.skills.length;i++){
@@ -14191,7 +14197,14 @@
                     // 清掉大于上限的数值
                     if(this.hp>=this.maxHp) this.hp=this.maxHp;
                     if (this.lili>=this.maxlili) this.lili = this.maxlili;
-                    
+                    if (this.num('e',{type:'equip'})>this.maxequip){			//飞虎：增加一个装备栏废弃检测
+                        var num = this.num('e', {type:'equip'}) - this.maxequip;
+                        this.chooseToDiscard('装备区达到上限，请弃置'+num+'张装备牌', num, {type:'equip'},'e',true);
+                    }
+                    /*if (this.num('j',{type:'delay'})>this.maxjudge){			//飞虎：为啥会多问一次
+                        var num = this.num('j',{type:'delay'}) - this.maxjudge;
+                        this.chooseToDiscard('技能牌数量达到上限，请弃置'+num+'张技能牌',num, {type:'delay'},'j',true);
+                    }*/
                     // 制作一会儿用于覆盖的函数
                     var hp=this.node.hp;
                     var lili=this.node.lili;
@@ -14211,7 +14224,7 @@
                         lili.innerHTML = '∞';
                     }
                     else if(game.layout=='default'&&this.maxlili>7){
-                        lili.innerHTML=this.lili+'/'+this.maxlili;
+                        lili.innerHTML=this.lili+'/'+(this.maxlili==Infinity?'∞':this.maxlili);
                         lili.classList.add('text');
                     }
                     else if(get.is.newLayout()&&
@@ -14221,9 +14234,10 @@
                         ((game.layout=='mobile'||game.layout=='long')&&this.dataset.position==0&&this.maxlili>5)
                     )){
                         lili.innerHTML=this.lili+'/'+this.maxlili+'<div></div>';
-                        if(this.lili==0){
+						if(this.lili==0){
                             lili.lastChild.classList.add('lost');
                         }
+                        if(this.maxlili == Infinity)lili.innerHTML=this.lili+'/∞';			//飞虎：莫德雷德灵力上限显示修改
                         lili.classList.add('textstyle');
                     }
                     else {
@@ -14257,7 +14271,7 @@
                         */
                     }
 
-                    if(this.maxHp==Infinity){
+                    if(this.hp==Infinity){			//飞虎：是不是写错了
                         hp.innerHTML='∞';
                     }
                     else if(game.layout=='default'&&this.maxHp>14){
@@ -14274,6 +14288,7 @@
                         if(this.hp==0){
                             hp.lastChild.classList.add('lost');
                         }
+                        if(this.maxHp == Infinity)hp.innerHTML=this.hp+'/∞';			//飞虎：和莫德雷德一样的问题
                         hp.classList.add('textstyle');
                         // hp.classList.remove('long');
                     }
@@ -21307,11 +21322,24 @@
                     if(typeof mod=='number') extra=mod;
                 }
                 var range=get.info(card).range;
-                if(range==undefined) return true;
-                for(var i in range){
-                    if(range[i]<get.distance(player,target,i)+extra) return false;
+				var outrange = get.info(card).outrange;
+				var result1 = true;
+				var result2 = true;
+                if(range==undefined && outrange == undefined) return true;
+				if (player.hasSkill("undist") || target.hasSkill("undist")) return false;
+            	if (range==undefined)result1 = false;
+				else if (typeof get.info(card).range == "function") result1 = get.info(card).range(card, player, target);
+			    else for(var i in range){
+					if(typeof range[i]=='object') result1 = (range[i][0]<=get.distance(player,target,i)+extra && range[i][1]>=get.distance(player,target,i)+extra);
+                    else result1 = (range[i]>=get.distance(player,target,i)+extra);
                 }
-                return true;
+				if (outrange==undefined)result2 = false;
+				else if (typeof get.info(card).outrange == "function") result2 = get.info(card).outrange(card, player, target);
+				else for (var j in outrange) {
+					if(typeof outrange[i]=='object') result2 = (outrange[i][0]<=get.distance(player,target,i)+extra && outrange[i][1]>=get.distance(player,target,i)+extra);
+                    else result2 = (outrange[j]<=get.distance(player,target,j)+extra);
+				}
+                return result1||result2;
             },
             filterTarget:function(card,player,target){
                 return (lib.filter.targetEnabled(card,player,target)&&
@@ -26409,7 +26437,7 @@
             }
         },
         createTrigger:function(name,skill,player,event){
-            if(player.isOut()||player.isDead()||player.removed) return;
+            if(player.isOut()||(player.isDead()&&!get.info(skill).forceDie)||player.removed) return;
             var next=game.createEvent('trigger',false);
             next.skill=skill;
             next.player=player;
@@ -32823,7 +32851,7 @@
                             page.appendChild(cfgnode);
                             if(alterableCharacters.length){
                                 var cfgnode2=createConfig({
-                                    name:'新版替换',
+                                    name:'里版替换',			//飞虎：改个名称
 									_name:mode,
 									init:charactersToAlter.length==0,
 									intro:'以下武将将被修改：'+get.translation(alterableCharacters),
@@ -37188,6 +37216,7 @@
                                         case '摸牌':target.draw(num);break;
                                         case '弃牌':target.discard(target.getCards('he').randomGets(num));break;
                                         case '加灵':target.gainlili(num, 'nosource');break;
+                                        case '灵击':target.damage(num,'thunder','nosource');break;			//飞虎：这个不该加一个么
                                         case '复活':target.revive(target.maxHp);break;
                                         case '换人':{
                                             if(_status.event.isMine()){
@@ -37244,8 +37273,9 @@
                         var noderecover=ui.create.div('.menubutton','回复',row1,clickrow1);
                         var nodedraw=ui.create.div('.menubutton','摸牌',row1,clickrow1);
                         var nodediscard=ui.create.div('.menubutton','弃牌',row1,clickrow1);
-                        var nodelink=ui.create.div('.menubutton','横置',row1,clickrow1);
+                        //var nodelink=ui.create.div('.menubutton','横置',row1,clickrow1);			//飞虎：没用的功能
                         var nodeturnover=ui.create.div('.menubutton','加灵',row1,clickrow1);
+                        var nodeturnback=ui.create.div('.menubutton','灵击',row1,clickrow1);			//飞虎：这个不该加一个么
                         var noderevive=ui.create.div('.menubutton','复活',row1,clickrow1);
                         var nodereplace=ui.create.div('.menubutton','换人',row1,clickrow1);
                         if(lib.config.mode!='identity'&&lib.config.mode!='guozhan'){
@@ -42639,10 +42669,10 @@
                         intro2.innerHTML+='<br><br><div class="hrefnode skillversion"></div>';
                         var skillversionnode=intro2.querySelector('.hrefnode.skillversion');
                         if(lib.config.vintageSkills.contains(skill)){
-                            skillversionnode.innerHTML='切换至新版';
+                            skillversionnode.innerHTML='切换至里版';			//飞虎：改个名称
                         }
                         else{
-                            skillversionnode.innerHTML='切换至旧版';
+                            skillversionnode.innerHTML='切换至表版';			//飞虎：改个名称
                         }
                         skillversionnode.listen(function(){
                             if(lib.config.vintageSkills.contains(skill)){
@@ -44967,21 +44997,27 @@
             if(!str) return '';
             //return str;
             return str.replace(/锁定技/g,'<span class="bluetext">锁定技</span>').
-             replace(/限定技/g,'<span class="firetext">限定技</span>').
-             replace(/觉醒技/g,'<span style="color:#800080">觉醒技</span>').
-             replace(/一回合一次/g,'<span class="greentext">一回合一次</span>').
+             replace(/限定技/g,'<span style="color:orange">限定技</span>').			//飞虎：换个颜色吧，别老抱着你的firetext了
+             replace(/觉醒技/g,'<span style="color:purple" data-nature="thundermm">觉醒技</span>').			//飞虎：不是有紫色吗
+             replace(/一回合(.*?)次/g,'<span class="greentext">一回合$1次</span>').				//飞虎：希望没BUG
+             /*replace(/一回合一次/g,'<span class="greentext">一回合一次</span>').
              replace(/一回合两次/g,'<span class="greentext">一回合两次</span>').
              replace(/一回合三次/g,'<span class="greentext">一回合三次</span>').
-             replace(/一回合每项各一次/g,'<span class="greentext">一回合每项各一次</span>').
+             replace(/一回合每项各一次/g,'<span class="greentext">一回合每项各一次</span>').*/
+			 replace(/转换技/g,'<span class="yellowtext">转换技</span>').
+			 replace(/使命技(.*?)成功/g,'<span style="color:indigo" data-nature="thundermm">使命技</span>$1<span data-nature="thundermm">成功</span>').
+			 replace(/使命技(.*?)失败/g,'<span style="color:indigo" data-nature="thundermm">使命技</span>$1<span data-nature="thundermm">失败</span>').
+			 replace(/昂扬技/g,'<span style="color:gold">昂扬技</span>').
+			 replace(/激昂/g,'<span style="color:orange">激昂</span>').			//飞虎：给自己的设计加点小灶
              //replace(/符卡技/g,'<span class="firetext">符卡技</span>').
-             replace(/符卡技（X）/g,'<span class="firetext">符卡技（X）</span>').
+             /*replace(/符卡技（X）/g,'<span class="firetext">符卡技（X）</span>').
              replace(/符卡技（0）/g,'<span class="firetext">符卡技（0）</span>').
              replace(/符卡技（1）/g,'<span class="firetext">符卡技（1）</span>').
              replace(/符卡技（2）/g,'<span class="firetext">符卡技（2）</span>').
              replace(/符卡技（3）/g,'<span class="firetext">符卡技（3）</span>').
              replace(/符卡技（4）/g,'<span class="firetext">符卡技（4）</span>').
-             replace(/符卡技（7）/g,'<span class="firetext">符卡技（7）</span>');
-             //replace(/符卡技*)/g,'<span class="firetext">符卡技*)</span>');
+             replace(/符卡技（7）/g,'<span class="firetext">符卡技（7）</span>');*/
+             replace(/符卡技（(.*?)）/g,'<span class="firetext">符卡技（$1）</span>');			//飞虎：一劳永逸
             //  replace(/主将技/g,'<span class="bluetext">主将技</span>').
             //  replace(/副将技/g,'<span class="bluetext">副将技</span>').
             //  replace(/阵法技/g,'<span class="bluetext">阵法技</span>').
@@ -45564,7 +45600,8 @@
 				}
                 */
                 
-                uiintro.addText('体力：' + node.hp + '/' + node.maxHp + '  灵力：' + node.lili + '/' + node.maxlili);
+                if(game.me.node.hp.classList && game.me.node.hp.classList.length == 1 && game.me.node.hp.classList[0] == "hp" && typeof(node.maxHp)=="number" && !isNaN(node.maxHp))uiintro.addText('体力：' + node.hp + '/' + node.maxHp + '  灵力：' + node.lili + '/' + node.maxlili);
+				else uiintro.addText('体力：' + '未知'+ '  灵力：' + node.lili + '/' + node.maxlili);			//飞虎：实在没办法了，只能改这里了
                 if(node.isUnderControl()){
                     var hs=node.getCards('h');
                     if(hs.length){
