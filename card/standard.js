@@ -362,14 +362,17 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			subtype:'disrupt',
 			enable:true,
 			selectTarget:1,
-			//range:{attack:1},
+			range:{attack:1},
+			outrange:function(card,player,target){
+				return target.storage._mubiao
+			},
 			/*
 			postAi:function(targets){
 				return targets.length==1&&targets[0].num('j');
 			},
 			*/
 			filterTarget:function(card,player,target){
-				return (target.num('hej') != 0) && (get.distance(player, target,'attack')<=1 || target.storage._mubiao);
+				return (target.num('hej') != 0);// && (get.distance(player, target,'attack')<=1 || target.storage._mubiao);
 			},
 			content:function(){
 				if (player.name == 'marisa'){
@@ -942,12 +945,16 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			},
 			contentBefore:function(){
 				player.$skill('冰域之宴',null,null,true);
+				player.addSkill('bingyu2');
 			},
 			content:function(){
-				if (target == player) target.addSkill('bingyu2');
+				//if (target == player) target.addSkill('bingyu2');
+				target.addSkill("bingyu1");
+				target.storage.bingyu = target.node.framebg.dataset.auto;
+				target.node.framebg.dataset.auto='snow';
 			},
 			contentAfter:function(){
-				player.markSkill('bingyu1');
+				player.markSkill('bingyu2');
 			},
 			ai:{
 				basic:{
@@ -1020,8 +1027,59 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			filterTarget:function(card,player,target){
 				return true;
 			},
+			contentBefore:function(){
+				'step 0'
+				player.$skill('令避之间',null,null,true);
+				'step 1'
+				var list = [];
+				var packs = lib.config.all.cards.diff(lib.config.cards);
+    			for (var i in lib.card){
+    				if(lib.card[i].mode&&lib.card[i].mode.contains(lib.config.mode)==false) continue;
+					if(lib.card[i].forbid&&lib.card[i].forbid.contains(lib.config.mode)) continue;
+ 					//if(lib.card[i].type == 'trick' || lib.card[i].type == 'basic' || lib.card[i].type == "jinji" || lib.card[i].type == "equip"){
+					if (packs){
+						var f = false;
+						for (var j = 0; j < packs.length; j ++){
+							if (lib.cardPack[packs[j]].contains(i)){
+								f = true;
+								break;
+							}
+						}
+						if (f) continue;
+					}
+					if (lib.translate[i] && lib.card[i].type != 'delay' && lib.card[i].type != 'zhenfa'){
+						list.add(i);
+					}
+    			}
+				player.chooseButton(['选择不让使用打出的牌',[list,'vcard']], true).set('filterButton',function(button){
+    					return true;
+					}).set('ai', function(button){
+						return button.link[2] == _status.event.rand;
+					}).set('rand', ['sha', 'tao', 'shan', 'juedou', 'shunshou', 'wuzhong'].randomGet());
+    			'step 2'
+				if(result.bool){
+					player.addSkill('lingbi2');
+					event.str = get.translation(player)+'声明了'+get.translation(result.links[0][2])+'不可以使用。';
+					game.log(event.str);
+					game.notify(event.str);
+					if (!player.storage._lingbi2) player.storage._lingbi2=[];
+					if (!player.storage.lingbi2) player.storage.lingbi2=[];
+					player.showCards(result.links);
+					player.storage._lingbi2.add(result.links[0][2]);
+					player.storage.lingbi2.add(game.createCard(result.links[0][2],'',''));
+					player.markSkill('lingbi2');
+					player.syncStorage('_lingbi2');
+					player.syncStorage('lingbi2');
+				}
+			},
 			content:function(){
-				
+				//if (target == player) target.addSkill('lingbi2');
+				target.addSkill('lingbi1');
+				target.storage.lingbi = target.node.framebg.dataset.auto;
+				target.node.framebg.dataset.auto='lock';
+			},
+			contentAfter:function(){
+				player.markSkill('lingbi1');
 			},
 			ai:{
 				basic:{
@@ -2269,9 +2327,6 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			trigger:{source:'damageBefore'},
     		forced:true,
     		priority:15,
-    		intro:{
-    			content:'防止所有角色造成的所有伤害',
-    		},
     		content:function(){
     			trigger.untrigger();
     			trigger.finish();
@@ -2302,13 +2357,16 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 			global:['bingyu1'],
 			trigger:{player:['phaseBegin', 'dieBegin']},
 			forced:true,
-			init:function(player){
+    		intro:{
+    			content:'防止所有角色造成的所有伤害',
+    		},
+			/*init:function(player){
 				var players = game.filterPlayer();
 				for (var i = 0; i < players.length; i ++){
 					players[i].storage.bingyu = players[i].node.framebg.dataset.auto;
 					players[i].node.framebg.dataset.auto='snow';
 				}
-			},
+			},*/
 			onremove:function(player){
 				var players = game.filterPlayer();
 				for (var i = 0; i < players.length; i ++){
@@ -2804,13 +2862,13 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 				content:'cards'
 			},
 			forced:true,
-			init:function(player){
+			/*init:function(player){
 				var players = game.filterPlayer();
 				for (var i = 0; i < players.length; i ++){
 					players[i].storage.lingbi = players[i].node.framebg.dataset.auto;
 					players[i].node.framebg.dataset.auto='lock';
 				}
-			},
+			},*/
 			onremove:function(player){
 				var players = game.filterPlayer();
 				for (var i = 0; i < players.length; i ++){
@@ -2849,7 +2907,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
     		check:function(card){return 6-get.value(card)},
 		},
 		// 令避发动时声明卡牌
-		_lingbi2:{
+		/*_lingbi2:{
 			skillAnimation:true,
 			trigger:{player:'useCard'},
 			forced:true,
@@ -2903,7 +2961,7 @@ game.import('card',function(lib,game,ui,get,ai,_status){
 					player.syncStorage('lingbi2');
 				}
 			},
-		},
+		},*/
 		_huanxiang:{
 			skillAnimation:true,
 			trigger:{global:'gameDrawAfter'},
