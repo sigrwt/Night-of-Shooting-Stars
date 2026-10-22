@@ -10,12 +10,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			aliceWLD:['female', '0', 3, ['WLD2', 'WLD1'], []],
 		},
 		characterIntro:{
-			homura:'问题：如果你目睹你最喜欢的人死亡，要她死多少次你才会疯掉？<br><b>出自：魔法少女小圆 画师：Capura.L</b>',
-			diva:'1. 进入男主的一群萌妹的后宫<br>2. 亮出自己百合的身份<br>3. ???<br>4. 发了发了！<br><b>出自：Date-A-Live! 画师：干物A太</b>',
-			monika:'问题：如果其他人已经不再是人了，那对她们做多残忍的事情都是没问题的，对吧？<br><b>出自：心跳文学部 画师：はっく</b>',
-			aliceWLD:'<br><b>出自：爱丽丝漫游仙境 画师：夕凪セシナ</b>',
-			haruhi:'如果有一个疯子，但是他说的狂话最后都成真了，那他还算一个疯子吗？<br><b>出自：凉宫春日的忧郁 画师：まとけち</b>',
-		},	   
+			homura:'问题：如果你目睹你最喜欢的人死亡，要她死多少次你才会疯掉？<br>出自：魔法少女小圆 <b>画师：Capura.L</b>',
+			diva:'1. 进入男主的一群萌妹的后宫<br>2. 亮出自己百合的身份<br>3. ???<br>4. 发了发了！<br>出自：Date-A-Live! <b>画师：干物A太</b>',
+			monika:'问题：如果其他人已经不再是人了，那对她们做多残忍的事情都是没问题的，对吧？<br>出自：心跳文学部 <b>画师：はっく</b>',
+			aliceWLD:'十九世纪英国作家刘易斯·卡罗尔创造的儿童文学形象，是诸多影视及动漫游戏人物原型。爱丽丝为日耳曼名艾戴尔海德在英语文化中演变的名字。<br>出自：爱丽丝漫游仙境 <b>画师：夕凪セシナ</b>',
+			haruhi:'如果有一个疯子，但是他说的狂话最后都成真了，那他还算一个疯子吗？<br>出自：凉宫春日的忧郁 <b>画师：まとけち</b>',
+		},
 		perfectPair:{
 		},
 		skill:{
@@ -271,7 +271,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					"step 2"
 					if (target.lili == 0){
 						game.log('回合结束后，',target,'执行一个由',player,'操作的出牌阶段');
-						target.addSkill('duzou_extra');
+						//target.tempSkills["duzou_extra"]="";
+						target.addTempSkill('duzou_extra',"gameStart");
 					}
 					if(player.isOnline2()){
 						player.send('closeDialog',event.videoId);
@@ -786,7 +787,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							player.addSkill('mengjin');
 						}
 					}
-					player.removeSkill('WLD2');
+					player.awakenSkill('WLD2');
+					//player.removeSkill('WLD2');
 				},
 			},
 			WLD3:{
@@ -827,7 +829,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if (result.bool){
 						console.log(result.links);
 						game.removeCardByObject(result.links);
-						let mode = 'standard';
+						var mode = 'standard';
 						for (var i = result.links.length-1; i >=0; i --){
 							var card = [get.suit(result.links[i]), result.links[i].number.toString(), result.links[i].name];
 							if (lib.config.addedpile){
@@ -938,12 +940,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 		},
 		translate:{
-            randomOL:'乱入OL',
+            randomOL:'ＯＬ',
             homura:'焰',
 			homura_die:'无论是多少次……',
 			time:'再回',
 			time_bg:'储',
-			time_info:'锁定技，游戏开始时，你创建上次晓美焰游戏结束/坠机时角色牌上的所有牌，将这些牌扣置于角色牌上。',
+			time_info:'锁定技，游戏准备时，你创建上次晓美焰游戏结束/坠机时角色牌上的所有牌，将这些牌扣置于角色牌上。',
 			time_audio1:'这次一定会成功！',
 			time_audio2:'但愿这个世界里不会发生什么奇怪的事情……',
 			time3:'保存（存）',
@@ -959,7 +961,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			homuraworld_skill:'焰的世界',
 			homuraworld_audio1:'……',
 			homuraworld_audio2:'欢迎来到我的世界。',
-			homuraworld_info:'符卡技（1）<永续>一回合一次，当前回合角色使用攻击牌指定目标时，你可以消耗1点灵力，取消之，并将之扣置于你的角色牌上。',
+			homuraworld_info:'符卡技（1）<永续>一回合一次，当前回合角色使用攻击牌指定一名目标时，你可以消耗1点灵力，取消之，并将之扣置于你的角色牌上。',
 			homuraworld_skill_audio1:'无论是什么，在这个魔法下！',
 			homuraworld_skill_audio2:'嗯，谢谢了。',
 			diva:'美九',
