@@ -9,11 +9,11 @@ window.config={
 	forbidboss:['rinnosuke'],
 	forbiddouble:[],
 	all:{
-		sgscharacters:['scarlet','sakura','imperishable','phantasmagoria','immaterial','sb','baka','secret'],
+		sgscharacters:['scarlet','sakura','imperishable','phantasmagoria','immaterial','sb','aeolus','naivasamjna','baka','shineedle','secret'],
 		sgscards:['standard','incident','skill'],
 		sgsmodes:['identity','versus','brawl','connect','library', 'puzzle'],
-		stockmode:['old_identity','identity','versus','boss','stg','chess','connect','brawl','library','tutorial','puzzle'],
-		stockextension:['boss','stg','coin', 'decadeUI'],
+		stockmode:['old_identity','identity','versus','ftg','boss','stg','tafang','chess','connect','brawl','library','tutorial','puzzle'],
+		stockextension:['boss','stg','coin', 'puzzle', 'ftg', 'decadeUI'],
 		layout:['default','newlayout'],
 		theme:['woodden','music','simple','inverse', 'monika'],
 		card_font:['xiaozhuan','huangcao','caoshu','xingshu'],
@@ -174,7 +174,7 @@ window.config={
 	sort:'type_sort',
 
 	cards:['standard','incident','skill'],
-	characters:['scarlet','sakura','imperishable','phantasmagoria','immaterial','sb','baka','secret'],
+	characters:['scarlet','sakura','imperishable','phantasmagoria','immaterial','sb','aeolus','baka','secret'],
 	connect_characters:[],
 	connect_cards:[],
 	plays:[],
