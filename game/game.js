@@ -27,7 +27,7 @@
 		mirrorURL:'https://raw.githubusercontent.com/BlackAndWhiteScallion/Night-of-Shooting-Stars',
 		//mirrorURL:'https://dev.tencent.com/u/BWS/p/Night-of-Shooting-Stars/git/raw',
 		//hallURL:'47.100.162.52',
-		hallURL:'47.99.105.222',
+		hallURL:'n.stlux.art',//'47.99.105.222',
 		assetURL:'',
 		backgroundmusicURL:'',
 		changeLog:[],
@@ -17576,6 +17576,34 @@
 						if(this.skills.contains(skill)) return;
 						var info=lib.skill[skill];
 						if(!info) return;
+						if(!info.noImmediate && !this.storage['_noImmediate_' + skill] && info.trigger && _status.event){			//飞虎：符卡、伊莉雅可以发动准备阶段技能
+							var curEvt = _status.event;
+							for (var ii = 0; ii < 20 && curEvt; ii++) {
+								if (curEvt.name === 'arrangeTrigger' && curEvt.list && curEvt.triggername && !curEvt.finished) {
+									var match = false;
+									(function(trig){
+										['global', 'player', 'source', 'target'].forEach(function(role){
+											var t = trig[role];
+											if (!t) return;
+											if (typeof t === 'string' && t === curEvt.triggername) match = true;
+											else if (Array.isArray(t) && t.indexOf(curEvt.triggername) >= 0) match = true;
+										});
+									})(info.trigger);
+									if (match) {
+										var exists = false;
+										for (var k = 0; k < curEvt.list.length; k++) {
+											if (curEvt.list[k][0] === skill && curEvt.list[k][1] === this) { exists = true; break; }
+										}
+										if (!exists) {
+											curEvt.list.push([skill, this, info.priority ? info.priority * 100 : 0]);
+											curEvt.list.sort(function(a, b){ return b[2] - a[2]; });
+										}
+										break;   // 找到最近一个匹配的就够了，不要往外层 push
+									}
+								}
+								curEvt = curEvt.parent;
+							}
+						}
 						if(!nobroadcast){
 							game.broadcast(function(player,skill){
 								player.skills.add(skill);
@@ -27922,15 +27950,18 @@
 				}
 				else{
 					if(player&&player.classList.contains('dead')&&!event.forceDie&&event.name!='phaseLoop'){
-						game.broadcastAll(function(){
-							while(_status.dieClose.length){
-								_status.dieClose.shift().close();
+						var _info = event.skill ? get.info(event.skill) : null;
+						if(!(_info && _info.forceDie)){
+							game.broadcastAll(function(){
+								while(_status.dieClose.length){
+									_status.dieClose.shift().close();
+								}
+							});
+							if(event._oncancel){
+								event._oncancel();
 							}
-						});
-						if(event._oncancel){
-							event._oncancel();
+							event.finish();
 						}
-						event.finish();
 					}
 					else if(player&&player.removed&&event.name!='phaseLoop'){
 						event.finish();

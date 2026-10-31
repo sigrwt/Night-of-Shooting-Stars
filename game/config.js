@@ -110,7 +110,7 @@ window.config={
 	hiddenBackgroundPack:[],
 	customBackgroundPack:[],
 	favouriteCharacter:['marisa'],
-	recentIP:['47.99.105.222', '123.56.240.30'],
+	recentIP:['43.138.118.130', 'n.stlux.art'],//'47.99.105.222', '123.56.240.30'],
 	vintageSkills:[],
 	alteredSkills:[],
 	brokenFile:[],
