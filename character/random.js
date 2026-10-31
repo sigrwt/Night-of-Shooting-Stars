@@ -1274,7 +1274,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				cost:4,
 				spell:['shishi1','shishi2'],
 				roundi:true,
-				trigger:{player:'phaseBeginStart'},
+				trigger:{player:'phaseBegin'},
 				check:function(event,player){
 					return false;
 				},
@@ -1604,13 +1604,18 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				},
 				content:function(){
 					player.loselili(lib.skill.stage.cost);
-					if (!player.countCards('h')) player.draw(3);
-					else if (player.countCards('h') < 3) player.draw(3 - player.countCards('h'));
-					player.mingzhiCard(player.getCards('h'));
 					player.turnOver();
 				},
 			},
-			stage1:{},
+			stage1:{
+				forced:true,
+				trigger:{player:'phaseBegin'},
+				content:function(){
+					if (!player.countCards('h')) player.draw(3);
+					else if (player.countCards('h') < 3) player.draw(3 - player.countCards('h'));
+					player.mingzhiCard(player.getCards('h'));
+				},
+			},
 			//朝田诗乃
 			yanju:{
 				trigger:{player:'phaseUseBegin'},
@@ -2393,7 +2398,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					"step 2"
 					var target = result.targets[0];
 					if (player.storage.mingzhi) {
-						var next = target.insertPhase()._triggered = null;
+						var next = target.insertPhase()._triggered = 3;          //保留phaseAfter
 						target.skipList.add('phaseDiscard');
 						if(event.redCard<2)target.skipList.add('phaseDraw');
 						if(event.blackCard<2)target.skipList.add('phaseUse');
@@ -2613,6 +2618,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					"step 0"
 					player.loselili(lib.skill.BlackBurningAttack.cost);
 					player.turnOver();
+				}
+			},
+			DBA2:{
+				forced:true,
+				trigger: {
+					player: "phaseBegin",
+				},
+				content: function () {
+					"step 0"
 					player.say('黑·魔·导·爆·裂·破！');
 					player.chooseTarget(get.prompt('BlackBurningAttack'), lib.filter.notMe, true).set('ai', function (target) {
 						return -get.attitude(player, target);
@@ -2624,7 +2638,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 				}
 			},
-			DBA2:{},
 			//千斗五十铃
 			moqiang:{
 				audio:2,
@@ -3858,7 +3871,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				group:["posunhexin_trigger"],
 				forced:true,
 				trigger:{
-					global:["phaseBefore","useCard"],
+					global:["phaseBeginStart","useCard"],
 					player: "loseEnd",
 				},
 				filter: function (event, player) {
@@ -4041,6 +4054,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			wuyan4:'舞燕（方片）',
 			stage:'旋转吧，舞台！',
 			stage_info:'符卡技（2）<永续>准备阶段，你将手牌数补至3，并明置所有手牌；无视〖舞燕〗中的“数量最多”。',
+			stage1:'旋转吧，舞台！',
+			stage1_info:'符卡技（2）<永续>准备阶段，你将手牌数补至3，并明置所有手牌；无视〖舞燕〗中的“数量最多”。',
 			
 			sinon:'诗乃',
 			yanju:'燕狙',
@@ -4152,6 +4167,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			BlackBurningAttack:'黑·魔·导·爆·裂·破',
 			DBA2:'黑魔导爆裂破',
 			BlackBurningAttack_info:'符卡技（3）准备阶段，你指定一名其他角色：弃置其场上所有牌，并视为对其使用一张【轰！】。',
+			DBA2_info:'符卡技（3）准备阶段，你指定一名其他角色：弃置其场上所有牌，并视为对其使用一张【轰！】。',
 			
 			sento_isuzu:'五十铃',
 			moqiang:'魔鎗',

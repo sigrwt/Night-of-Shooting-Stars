@@ -456,7 +456,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								content:function(){
 								},
 							};
-						}, player.name, lib.translate[player.name], "<u>追加效果：当你获得此牌时，展示之，你失去1点体力。</u>", player.node.avatar.style.backgroundImage, 'theme/simple/unknown.png', "125% auto");
+						}, player.name, lib.translate[player.name], "<u>追加效果：当你获得此牌时，展示之，你失去1点体力。</u>", player.node.avatar.style.backgroundImage, 'theme/simple/unknown.png', "100% auto");
 						var card = game.createCard("xc_"+player.name,"",0);
 						game.broadcastAll(function(playerid, cardid, owner, slot, origin, avatarBg, avatarSize){
 							var cd = lib.cardOL ? lib.cardOL[cardid] : null;
@@ -471,7 +471,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							cd.node.image.style.backgroundImage=avatarBg;
 							cd.node.image.style.backgroundSize=avatarSize;
 							cd.setBackgroundImage('theme/simple/unknown.png');
-						}, player.playerid, card.cardid, player.playerid, 'name', player.name, player.node.avatar.style.backgroundImage, "125% auto");
+						}, player.playerid, card.cardid, player.playerid, 'name', player.name, player.node.avatar.style.backgroundImage, "100% auto");
 						var cards = [];
 						cards.push(card);
 						player.useCard({name:"tao"},cards,trigger.player);
@@ -510,7 +510,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								content:function(){
 								},
 							};
-						}, player.name2, lib.translate[player.name2], "<u>追加效果：当你获得此牌时，展示之，你失去1点体力。</u>", player.node.avatar2.style.backgroundImage, 'theme/simple/unknown.png', "125% auto");
+						}, player.name2, lib.translate[player.name2], "<u>追加效果：当你获得此牌时，展示之，你失去1点体力。</u>", player.node.avatar2.style.backgroundImage, 'theme/simple/unknown.png', "100% auto");
 						var card = game.createCard("xc_"+player.name2,"",0);
 						game.broadcastAll(function(playerid, cardid, owner, slot, origin, avatarBg, avatarSize){
 							var cd = lib.cardOL ? lib.cardOL[cardid] : null;
@@ -525,7 +525,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							cd.node.image.style.backgroundImage=avatarBg;
 							cd.node.image.style.backgroundSize=avatarSize;
 							cd.setBackgroundImage('theme/simple/unknown.png');
-						}, player.playerid, card.cardid, player.playerid, 'name2', player.name2, player.node.avatar2.style.backgroundImage, "125% auto");
+						}, player.playerid, card.cardid, player.playerid, 'name2', player.name2, player.node.avatar2.style.backgroundImage, "100% auto");
 						var cards = [];
 						cards.push(card);
 						player.useCard({name:"tao"},cards,trigger.player);

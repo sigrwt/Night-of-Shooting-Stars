@@ -155,7 +155,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				audio:2,
 				cost:2,
 				roundi:true,
-				spell:['ADA2','ADA3'],
+				spell:['ADA1','ADA2','ADA3'],
 				trigger:{player:'phaseBegin'},
 				filter:function(event,player){
 					return player.lili > lib.skill.AestusDomusAurea.cost;
@@ -165,6 +165,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.loselili(lib.skill.AestusDomusAurea.cost);
 						player.turnOver();
 					}
+				},
+				check:function(event,player){
+					return player.getHandcardLimit() - player.countCards('h') >= 2;
+				},
+			},
+			ADA1:{
+				forced:true,
+				trigger:{player:'phaseBegin'},
+				content:function(){
 					var num = player.getHandcardLimit() - player.countCards('h');
 					if (!player.countCards('h')){
 						player.draw(player.getHandcardLimit());
@@ -1025,7 +1034,8 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 									dialog.buttons[i].node.name.innerHTML='未<br>知';
 									dialog.buttons[i].node.name.dataset.nature='';
 									dialog.buttons[i].setBackgroundImage("theme/simple/unknown.png");
-									dialog.buttons[i].style.backgroundSize = "100% 100%";
+									dialog.buttons[i].style.backgroundPosition = 'center center';
+									dialog.buttons[i].style.backgroundSize = "100% auto";
 									dialog.buttons[i]._nointro=true;
 									dialog.buttons[i].classList.add('menubg');
 								}
@@ -1260,6 +1270,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					}
 					player.loselili(num);
 					player.turnOver();
+				}
+			},
+			quintette_fire_2:{
+				forced:true,
+				trigger:{
+					player:"phaseBegin",
+				},
+				content:function(){
+					'step 0'
 					player.chooseTarget(get.prompt('quintette_fire'),true).set('ai',function(target){
 						return -get.attitude(player,target);
 					});
@@ -1498,12 +1517,12 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					"step 0"
 					if(lib.config.compare_discard){
 						player.storage.shengguang = lib.config.compare_discard;
-						game.saveConfig('compare_discard',false);
+						//game.saveConfig('compare_discard',false);
 					}
 					event.target = trigger.target;
 					if(trigger.target==player) event.target = trigger.player;
 					player.chooseToCompare(event.target);
-					"step 1"
+					/*"step 1"
 					if(player.storage.shengguang){
 						game.saveConfig('compare_discard',player.storage.shengguang);
 						if (!result.cancelled&&!result.tie){
@@ -1513,7 +1532,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 								event.target.draw();
 							}
 						}
-					}
+					}*/
 				},
 				group: ['shengguang_draw','shengguang_win'],
 				subSkill: {
@@ -1794,7 +1813,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				roundi: true,
 				priority: 22,
 				cost:2,
-				spell: ["FCN2","FCN3"],
+				spell: ["FCN1","FCN2","FCN3"],
 				trigger: {
 					player: "phaseBegin",
 				},
@@ -1808,6 +1827,23 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.loselili(lib.skill.FaxCaelestis.cost);
 						player.turnOver();
 					}
+					var num = player.getHandcardLimit() - player.countCards('h');
+					if (!player.countCards('h')){
+						player.draw(player.getHandcardLimit());
+					} else if (num > 0){
+						player.draw(num);
+					}
+				},
+				check: function (event, player) {
+					return player.getHandcardLimit() - player.countCards('h') >= 2;
+				},
+			},
+			FCN1: {
+				forced:true,
+				trigger: {
+					player: "phaseBegin",
+				},
+				content: function () {
 					var num = player.getHandcardLimit() - player.countCards('h');
 					if (!player.countCards('h')){
 						player.draw(player.getHandcardLimit());
@@ -2419,8 +2455,10 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						var list = {};
 						var hs = player.getCards('he');
 						var numlist = [];
-						for (var i = 0; i < hs.length; i++) {
-							var namele = get.translation(hs[i].name).length;
+						//for (var i = 0; i < hs.length; i++) {
+							//var namele = get.translation(hs[i].name).length;
+							if(hs)for(var h of hs){
+							    var namele=get.translation(h.name).length||0;
 							if (!numlist.contains(namele)) {
 								numlist.push(namele);
 							}
@@ -2431,9 +2469,11 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 							var num2 = j + num;
 							list[j] = [num1, num2];
 						}
+						var can_invoke
 						for (var k of numlist) {
-							if (_status.event.getParent().filterCard({ name: button.link[2] }, player, _status.event.getParent()) && list[k][0] <= (get.translation(button.link[2]).length) && (get.translation(button.link[2]).length) <= list[k][1]) return true;
+							if (list[k][0] <= (get.translation(button.link[2]).length) && (get.translation(button.link[2]).length) <= list[k][1]) can_invoke = true;
 						}
+						return _status.event.getParent().filterCard({name:button.link[2]},player,_status.event.getParent())&&can_invoke;
 					},
 					check: function (button) {
 						var player = _status.event.player;
@@ -2528,6 +2568,15 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 0'
 					player.loselili(lib.skill.bb_ccc.cost);
 					player.turnOver();
+				},
+			},
+			bb_ccc2: {
+				forced:true,
+				trigger: {
+					player: "phaseBegin",
+				},
+				content: function () {
+					'step 0'
 					player.say('Cursed，cupid，cleanser!');
 					event.targets = game.filterPlayer();
 					event.targets.sort(lib.sort.seat);
@@ -2574,7 +2623,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					if (event.targets.length) event.goto(1);
 				},
 			},
-			bb_ccc2: {},
 			bbdiaohu: {
 				group:"undist",
 				mark: true,
@@ -2909,7 +2957,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					});
 				},*/
 				audio:2,
-				trigger:{player:'phaseBeginStart'},
+				trigger:{player:'phaseBegin'},
 				filter:function(event,player){
 					return player.lili > player.hp+game.countPlayer(function(target){return target != player});//lib.skill.enuma_elish.cost;
 				},
@@ -2950,7 +2998,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			XmasEveTheater:{
 				audio:2,
 				cost:2,
-				spell:['ChrisET'],
+				spell:['CET1','ChrisET'],
 				trigger:{player:'phaseBegin'},
 				filter:function(event,player){
 					return player.lili > lib.skill.XmasEveTheater.cost;
@@ -2960,6 +3008,22 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						player.loselili(lib.skill.XmasEveTheater.cost);
 						player.turnOver();
 					}
+					var num = player.getHandcardLimit() - player.countCards('h');
+					if (!player.countCards('h')){
+						player.draw(player.getHandcardLimit());
+					}
+					else if (num > 0){
+						player.draw(num);
+					}
+				},
+				check:function(event,player){
+					return player.getHandcardLimit() - player.countCards('h') >= 2;
+				},
+			},
+			CET1:{
+				forced:true,
+				trigger:{player:'phaseBegin'},
+				content:function(){
 					var num = player.getHandcardLimit() - player.countCards('h');
 					if (!player.countCards('h')){
 						player.draw(player.getHandcardLimit());
@@ -4981,6 +5045,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			muqi_info:'你可以将两张牌当作一种基本牌，或本回合没有使用过的一种法术牌使用。',
 			AestusDomusAurea:'招荡的黄金剧场',
 			AestusDomusAurea_info:'符卡技（2）<永续>准备阶段，你将手牌数补至手牌上限；出牌阶段，你可以弃置一张手牌，声明一种技能牌，然后获得之；符卡结束时，你可以消耗1点灵力，令符卡不结束。',
+			ADA1:'招荡的黄金剧场',
 			ADA2:'招荡的黄金剧场',
 			ADA2_backup:'招荡的黄金剧场',
 			ADA3:'招荡的黄金剧场',
@@ -5051,7 +5116,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			illyasviel:'伊莉雅',
 			illyasviel_die:'既然牵起了伊莉雅的手，就要守护她到最后啊……',
 			huanzhao:'幻召',
-			huanzhao_info:'游戏准备时，你获得两张角色牌并暗置，称为“梦幻”；你击坠一名角色后，将其角色牌暗置加入“梦幻”；你视为拥有明置“梦幻”的第一项技能；准备阶段开始时，你可以明置一张“梦幻”并暗置其余，然后可以消耗1点灵力，获得该“梦幻”的所有技能，直到回合结束。',
+			huanzhao_info:'游戏准备时，你获得两张角色牌并暗置，称为“梦幻”；你击坠一名角色后，将其角色牌暗置加入“梦幻”；你视为拥有明置“梦幻”的第一项技能；准备阶段，你可以明置一张“梦幻”并暗置其余，然后可以消耗1点灵力，获得该“梦幻”的所有技能，直到回合结束。',
 			huanzhao1:'设置“梦幻”',
 			huanzhao1_audio1:'那个、我叫伊莉雅，小学五年级。姑且……在当魔法少女。呜、虽然可能帮不上忙……但是我会努力的！',
 			huanzhao2:'幻召',
@@ -5072,6 +5137,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			quintette_fire_audio1:'肌肉系统、神经系统、血管系统淋巴系统。拟似魔术回路变换……完成！这就是我的一切……多元重奏饱和炮击！',
 			quintette_fire_audio2:'无法和伊莉雅成为朋友的话，就只能打倒妳了！',
 			quintette_fire_2:'多元重奏饱和炮击',
+			quintette_fire_2_info:'符卡技（7）<u>此符卡消耗-X（X为“梦幻”的数量）；</u>准备阶段，你对一名角色造成3点弹幕伤害，然后弃置所有手牌。',
 			
 			nurseryrhyme:'童谣',
 			lvtu:'旅兔',
@@ -5116,6 +5182,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			//nero_wedding_ab: '尼禄',
 			FaxCaelestis: '星驰的终幕蔷薇',
 			FaxCaelestis_info: '符卡技（2）<永续>准备阶段，你将手牌数补至手牌上限；你使用辅助牌时，可以令一名其他角色也成为额外目标；一回合一次，你使用攻击牌时，可以将之交给一名角色，令其成为该牌的来源。',
+			FCN1: '终幕蔷薇',
 			FCN2: '终幕蔷薇',
 			FCN2_info: '',
 			FCN3: '星驰的终幕蔷薇',
@@ -5192,6 +5259,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			nero_claus:'圣诞尼禄',
 			XmasEveTheater:'平安的圣夜剧场',
 			XmasEveTheater_info:'符卡技（2）准备阶段，你将手牌数补至体力上限；出牌阶段，你可以将一张手牌交给一名角色；然后，其可以使用之：获得1点灵力',
+			CET1:'平安的圣夜剧场',
 			ChrisET:'平安的圣夜剧场',
 			ChrisET_info:'出牌阶段，你可以将一张手牌交给一名角色；然后，其可以使用之：获得1点灵力',
 			

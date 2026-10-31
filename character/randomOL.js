@@ -772,7 +772,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 			},
 			WLD2:{
 				forced:true,
-				trigger:{player:'phaseBeginStart'},
+				trigger:{player:'phaseBegin'},
 				derivation:['WLD3', 'mengjin'],
 				content:function(){
 					'step 0'

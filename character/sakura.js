@@ -316,6 +316,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 0'
 					player.loselili(lib.skill.shuanggui.cost);
 					player.turnOver();
+				},
+			},
+			shuanggui2:{
+				forced:true,
+				trigger:{player:'phaseBegin'},
+				content:function(){
+					'step 0'
 					player.chooseTarget([1,1],'令一名角色与你一同摸一张牌',function(card,player,target){
 						return target != player;
 					},true).set('ai',function(target){
@@ -329,9 +336,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						result.targets[0].addTempSkill('shuanggui4');
 					}
 				},
-			},
-			shuanggui2:{
-
 			},
 			shuanggui3:{
 				audio:2,
@@ -898,6 +902,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				trigger:{target:'useCardToBegin'},
 				audio:2,
 				audioname:['merlin','lyrica'],
+				noImmediate:true,
 				filter:function(event,player){
 					return event.card.name == 'sha';
 				},
@@ -1874,6 +1879,13 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 					'step 0'
 					player.loselili(lib.skill.tianhugongzhu.cost);
 					player.turnOver();
+				},
+			},
+			tianhugongzhu_1:{
+				forced:true,
+				trigger:{player:'phaseBegin'},
+				content:function(){
+					'step 0'
 					player.chooseTarget([1,1],'令一名角色与你一同回复1点体力',function(card,player,target){
 						return target != player;
 					},true).set('ai',function(target){
@@ -1887,8 +1899,6 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 						result.targets[0].addTempSkill('tianhugongzhu_2');
 					}
 				},
-			},
-			tianhugongzhu_1:{
 			},
 			tianhugongzhu_2:{
 				audio:2,
@@ -2148,7 +2158,7 @@ game.import('character',function(lib,game,ui,get,ai,_status){
 				cost:4,
 				spell:['mengjing2'],
 				roundi:true,
-				trigger:{player:'phaseBeginStart'},
+				trigger:{player:'phaseBegin'},
 				filter:function(event,player){
 					return player.lili > lib.skill.mengjing.cost;
 				},
